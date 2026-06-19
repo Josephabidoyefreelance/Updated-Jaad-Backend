@@ -545,6 +545,19 @@ app.get('/api/admin/activity', adminMiddleware, async (req, res) => {
   catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+
+// Send verification code via email
+app.post('/api/auth/send-code', async (req, res) => {
+  try {
+    const { email, code, name } = req.body;
+    await sendEmail(email, 'Your Jaad Logistics Verification Code',
+      emailTemplate(name || 'Customer',
+        `Your account verification code is: <br><br><div style="font-size:2rem;font-weight:bold;letter-spacing:14px;color:#DC1A22;font-family:monospace;text-align:center">${code}</div><br>Enter this code on the website to verify your account. This code expires in 10 minutes.`
+      ));
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 // Health check
 app.get('/api/health', (req, res) => res.json({ status: 'ok', time: new Date().toISOString() }));
 
